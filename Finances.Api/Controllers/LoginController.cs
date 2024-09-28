@@ -1,5 +1,6 @@
 ﻿using Finances.Commands;
 using Finances.Handlers;
+using Finances.Infra.Common;
 using Finances.Infra.Common.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace Finances.Api.Controllers
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<dynamic>>
+        public async Task<ActionResult<ICommandResult>>
             AuthenticateAsync([FromBody] LoginCommand command)
         {
             try
