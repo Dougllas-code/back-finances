@@ -8,7 +8,7 @@ namespace Finances.Infra.Context
 
         public AppDbContext()
         {
-            Connection = new MySqlConnection("server=localhost;user id=root;password=Smidvarg0091;database=finances;persistsecurityinfo=False");
+            Connection = new MySqlConnection("server=localhost;user id=root;password=515609;database=finances;persistsecurityinfo=False");
             Connection.Open();
         }
 
