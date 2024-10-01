@@ -26,6 +26,9 @@ builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<LoginHandler>();
 
+builder.Services.AddScoped<IAccountTypeRepository, AccountTypeRepository>();
+builder.Services.AddScoped<AcccountTypeHandler>();
+
 // Add services to the container.
 builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddControllers();
