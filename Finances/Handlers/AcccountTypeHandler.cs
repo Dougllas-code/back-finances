@@ -12,7 +12,8 @@ namespace Finances.Handlers
     public class AcccountTypeHandler :
         Notifiable<Notification>,
         ICommandHandler<AccountTypeCommandCreate>,
-        ICommandHandler<AccountTypeCommandUpdate>
+        ICommandHandler<AccountTypeCommandUpdate>,
+        ICommandHandler<AccountTypeCommandDelete>
     {
 
         private readonly IAccountTypeRepository _accountTypeRepository;
@@ -77,13 +78,21 @@ namespace Finances.Handlers
                 return new GenericCommandResult(CommandResultType.Error, "Corriga as inconsistências.", Notifications);
             }
 
+            var accountTypeSaved = await _accountTypeRepository.Get(accountType.Id);
+
+            if(accountTypeSaved == null)
+            {
+                _logger.LogError($"Erro ao atualizar registro");
+                return new GenericCommandResult(CommandResultType.NotFound, "Registro não encontrado", accountType.Id);
+            }
+
             _logger.LogInformation($"Atualizando tipo de conta");
             var changedLines = await _accountTypeRepository.Update(accountType);
 
             if (changedLines == 0)
             {
                 _logger.LogError($"Erro ao atualizar registro");
-                return new GenericCommandResult(CommandResultType.Error, "Erro ao atualizar registro", command.Name);
+                return new GenericCommandResult(CommandResultType.Error, "Erro ao atualizar registro", accountType.Id);
             }
 
             _logger.LogInformation($"Buscando registro atualizado");
@@ -91,6 +100,35 @@ namespace Finances.Handlers
 
             _logger.LogInformation($"Tipo de conta atualizada com sucesso: {command}");
             return new GenericCommandResult(CommandResultType.Success, "Registro atualizado com sucesso", result);
+        }
+
+        public async Task<ICommandResult> Handle(AccountTypeCommandDelete command)
+        {
+            if (!command.IsValid)
+            {
+                _logger.LogError($"Command inválido: {command}");
+                return new GenericCommandResult(CommandResultType.Error, "Corriga as inconsistências.", Notifications);
+            }
+
+            _logger.LogInformation($"Buscando registro a ser excluído");
+            var accountType = await _accountTypeRepository.Get(command.Id);
+
+            if (accountType == null)
+            {
+                _logger.LogError($"Erro ao excluir registro");
+                return new GenericCommandResult(CommandResultType.NotFound, "Registro não encontrado", command.Id);
+            }
+
+            var result = await _accountTypeRepository.Delete(command.Id);
+
+            if (result == 0)
+            {
+                _logger.LogError($"Erro ao excluir registro");
+                return new GenericCommandResult(CommandResultType.Error, "Erro ao excluir registro", command.Id);
+            }
+
+            _logger.LogInformation($"Tipo de conta excluída com sucesso: {command}");
+            return new GenericCommandResult(CommandResultType.Success, "Registro excluído com sucesso", command.Id);
         }
     }
 }

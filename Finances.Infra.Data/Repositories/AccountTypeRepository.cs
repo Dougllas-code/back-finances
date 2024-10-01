@@ -34,9 +34,17 @@ namespace Finances.Infra.Data.Repositories
             return result;
         }
 
-        public Task<dynamic> Delete(int Id)
+        public async Task<dynamic> Delete(int id)
         {
-            throw new NotImplementedException();
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id);
+
+            var query = AccountTypeQueries.DELETE;
+
+            using var connection = GetConnection();
+            var result = await connection.ExecuteAsync(query, parameters);
+
+            return result;
         }
 
         public async Task<List<AccountTypeQueryResult>> GetAll()

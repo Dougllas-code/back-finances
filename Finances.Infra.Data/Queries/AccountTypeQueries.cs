@@ -23,5 +23,9 @@
             WHERE
                 id = @Id;  ;
         ";
+
+        public const string DELETE = @"
+            DELETE FROM account_types WHERE id = @Id;
+        ";
     }
 }

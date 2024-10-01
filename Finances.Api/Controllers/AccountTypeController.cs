@@ -81,8 +81,37 @@ namespace Finances.Api.Controllers
 
                 if (response.Type == CommandResultType.Error)
                     return BadRequest(response);
+                
+                if (response.Type == CommandResultType.NotFound)
+                    return NotFound(response);
 
                 return Ok(response);
+            }
+            catch (Exception error)
+            {
+                _logger.LogError("Erro ao atualizar registro.");
+                return BadRequest(error.Message);
+            }
+
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<ActionResult<ICommandResult>>
+            DeleteAsync([FromQuery] AccountTypeCommandDelete command)
+        {
+            try
+            {
+                _logger.LogInformation("Iniciando atualização do registro.");
+                var response = await _accountTypeHandler.Handle(command);
+
+                if (response.Type == CommandResultType.Error)
+                    return BadRequest(response);
+                
+                if (response.Type == CommandResultType.NotFound)
+                    return NotFound(response);
+
+                return NoContent();
             }
             catch (Exception error)
             {
