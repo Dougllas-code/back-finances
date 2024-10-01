@@ -43,7 +43,7 @@ namespace Finances.Handlers
             if (user == null)
             {
                 _logger.LogError("Usuário não encontrado");
-                return new GenericCommandResult(CommandResultType.NotFound, "Usuário não encontrado.", user);
+                return new GenericCommandResult(CommandResultType.NotFound, "Usuário não encontrado.", command.Email);
             }
 
             _logger.LogInformation("Gerando token");
