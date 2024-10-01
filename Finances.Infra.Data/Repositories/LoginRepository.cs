@@ -48,7 +48,6 @@ namespace Finances.Infra.Data.Repositories
 
             using var connection = _context.Connection;
             var user = await connection.QueryFirstOrDefaultAsync<User>(query, parameters);
-            connection.Close();
             return user;
         }
     }
