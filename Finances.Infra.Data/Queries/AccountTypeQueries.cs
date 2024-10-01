@@ -10,5 +10,18 @@
         public const string GET = @"
             SELECT * FROM account_types WHERE Id = @Id;
         ";
+        
+        public const string GET_ALL = @"
+            SELECT * FROM account_types;
+        ";
+        
+        public const string UPDATE = @"
+            UPDATE account_types 
+            SET 
+                name = @Name,
+                color = @Color
+            WHERE
+                id = @Id;  ;
+        ";
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Dapper;
-using Finances.Commands.AccountType;
 using Finances.Entities;
 using Finances.Infra.Context;
 using Finances.Infra.Data.Queries;
+using Finances.Queries;
 using Finances.Repositories;
+using System.Data;
 
 namespace Finances.Infra.Data.Repositories
 {
@@ -15,7 +16,12 @@ namespace Finances.Infra.Data.Repositories
             _context = context;
         }
 
-        public async Task<int> Create(AccountTypeCommandCreate accountType)
+        private IDbConnection GetConnection()
+        {
+            return _context.Connection;
+        }
+
+        public async Task<int> Create(AccountType accountType)
         {
             var parameters = new DynamicParameters();
             parameters.Add("Name", accountType.Name);
@@ -23,7 +29,7 @@ namespace Finances.Infra.Data.Repositories
 
             var query = AccountTypeQueries.CREATE;
 
-            using var connection = _context.Connection;
+            using var connection = GetConnection();
             var result = await connection.QuerySingleAsync<int>(query, parameters);
             return result;
         }
@@ -33,26 +39,39 @@ namespace Finances.Infra.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<AccountType>> GetAll()
+        public async Task<List<AccountTypeQueryResult>> GetAll()
         {
-            throw new NotImplementedException();
+            var query = AccountTypeQueries.GET_ALL;
+
+            using var connection = GetConnection();
+            var result = await connection.QueryAsync<AccountTypeQueryResult>(query);
+            return result.ToList();
         }
-        
-        public async Task<AccountType?> Get(int Id)
+
+        public async Task<AccountTypeQueryResult?> Get(int Id)
         {
             var parameters = new DynamicParameters();
             parameters.Add("Id", Id);
 
             var query = AccountTypeQueries.GET;
 
-            using var connection = _context.Connection;
-            var result = await connection.QueryFirstOrDefaultAsync<AccountType>(query, parameters);
+            using var connection = GetConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<AccountTypeQueryResult>(query, parameters);
             return result;
         }
 
-        public Task<AccountType> Update(AccountTypeCommandUpdate accountTye)
+        public async Task<int> Update(AccountType accountType)
         {
-            throw new NotImplementedException();
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", accountType.Id);
+            parameters.Add("Name", accountType.Name);
+            parameters.Add("Color", accountType.Color);
+
+            var query = AccountTypeQueries.UPDATE;
+
+            using var connection = GetConnection();
+            var result = await connection.ExecuteAsync(query, parameters);
+            return result;
         }
     }
 }
