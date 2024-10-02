@@ -1,14 +1,19 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 
 namespace Finances.Infra.Context
 {
     public class AppDbContext: IAsyncDisposable
     {
         public MySqlConnection Connection { get; set; }
+        private readonly IConfiguration _configuration;
 
-        public AppDbContext()
+        public AppDbContext(IConfiguration configuration)
         {
-            Connection = new MySqlConnection("server=localhost;user id=root;password=515609;database=finances;persistsecurityinfo=False");
+            _configuration = configuration;
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            Connection = new MySqlConnection(connectionString);
             Connection.Open();
         }
 
